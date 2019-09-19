@@ -54,5 +54,6 @@ REDIS_SECRET=chooseTheBestPasswordIfNot150kPasswordGuessesPerSecondWillBeEnoughT
 REDIS_TTL=86400
 REDIS_PREFIX=ClientRedis
 REDIS_NAME="<prefix_name of the redis keys>"
+SLACK_WEB_HOOK_URL=https://hooks.slack.com/services/xxxxxxxxxxxx
 
 ```
