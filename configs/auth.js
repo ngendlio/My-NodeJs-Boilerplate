@@ -1,10 +1,14 @@
 const LocalStrategy = require('passport-local').Strategy,
   User = require('../models/User');
+const { checkPassword } = require('../helpers');
+const passport = require('passport');
 
 const logger = require('./logging');
 logger.info(' ✓ Authentication configured ');
 
-module.exports = passport => {
+const configureAuth = app => {
+  app.use(passport.initialize()).use(passport.session());
+
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
@@ -15,21 +19,21 @@ module.exports = passport => {
       .exec((err, user) => done(err, user));
   });
 
-  passport.use('local', checkSigninStrategy);
+  passport.use(checkSigninStrategy);
   // More and more strategies of authentication here
 };
 
 const checkSignin = async (email, providedPassword, done) => {
   try {
-    const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
-      'password'
-    );
+    const user = await User.findOne({ email: email.toLowerCase().trim() })
+      .select({ password: 1 })
+      .exec();
 
-    if (!user) return done(err, user);
+    if (!user) return done({ msg: 'NOT_FOUND' });
 
-    const isPasswordCorrect = await user.comparePassword(providedPassword, user);
+    const isPasswordCorrect = await checkPassword(providedPassword, user);
 
-    if (!isPasswordCorrect) return done(err, false, { msg: 'INVALID_CREDENTIALS' });
+    if (!isPasswordCorrect) return done({ msg: 'INVALID_CREDENTIALS' });
 
     user.lastLogin = new Date();
 
@@ -37,10 +41,12 @@ const checkSignin = async (email, providedPassword, done) => {
 
     return done(null, user);
   } catch (error) {
-    return done(err, false);
+    return done(error);
   }
 };
 
 const mappingFields = { usernameField: 'email', passwordField: 'password' };
 
 const checkSigninStrategy = new LocalStrategy(mappingFields, checkSignin);
+
+module.exports = { configureAuth };

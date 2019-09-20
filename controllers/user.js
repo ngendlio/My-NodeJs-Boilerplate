@@ -8,7 +8,7 @@ exports.getUsers = async (req, res) => {
   try {
     const users = await User.find();
 
-    return res.send(usersw);
+    return res.send(users);
   } catch (error) {
     logger.issue(error, res);
   }
