@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
-const SALT_ROUNDS = 10; //(rounds=10: ~10 hashes/sec) [https://goo.gl/aK7A0t]
 const Schema = mongoose.Schema;
+const { hashPassword } = require('../helpers/index');
+const logger = require('../configs/logging');
 const {
   GENDER_TYPES,
   USER_STATUS,
@@ -50,23 +51,15 @@ const UserSchema = new Schema(
   META_INFO
 );
 
-UserSchema.pre('save', async next => {
+UserSchema.pre('save', async function(next) {
   const user = this;
 
   if (user.isModified('password')) {
-    const salt = await bcrypt.genSalt(SALT_ROUNDS);
-    const hash = await bcrypt.hash(this.password + user._id, salt);
+    const hash = await hashPassword(user);
     user.password = hash;
   }
 
   next();
 });
-
-// Here we are protected agains dictionary attack
-UserSchema.methods.comparePassword = (candidatePassword, user, cb) => {
-  bcrypt.compare(candidatePassword + user._id, user.password, (err, isMatch) => {
-    cb(err, isMatch);
-  });
-};
 
 module.exports = mongoose.model('User', UserSchema);

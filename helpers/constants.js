@@ -6,6 +6,8 @@
 module.exports = {
   PASSWORD_MAX_ATTEMPTS: 3,
 
+  REDIS_AUTH_PREFIX: 'AUTH_',
+
   GENDER_TYPES: toEnums(['MALE', 'FEMALE']),
 
   META_INFO: { timestamps: true, versionKey: false },

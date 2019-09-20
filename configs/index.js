@@ -1,5 +1,6 @@
-require('dotenv').config();
+const { fromBase64 } = require('../helpers');
 
+require('dotenv').config();
 console.log(' ✓ Environment variables configured ');
 
 const {
@@ -8,6 +9,7 @@ const {
   MONGO_USER,
   MONGO_PASSWORD,
   PASSWORD_SALT,
+  PASSWORD_SALT_ROUNDS,
   SESSION_SECRET,
   REDIS_PORT,
   REDIS_HOST,
@@ -15,7 +17,10 @@ const {
   REDIS_TTL,
   REDIS_PREFIX,
   REDIS_NAME,
+  REDIS_DATABASE_NUMBER,
   SLACK_WEB_HOOK_URL,
+  PRIVATE_KEY,
+  JWT_SECRET,
   NODE_ENV
 } = process.env; // we are filtering which env vars we extract from the OS
 
@@ -27,6 +32,7 @@ module.exports = {
   MONGO_USER,
   MONGO_PASSWORD,
   PASSWORD_SALT,
+  PASSWORD_SALT_ROUNDS: Number(PASSWORD_SALT_ROUNDS),
   SESSION_SECRET,
   REDIS_PORT,
   REDIS_HOST,
@@ -34,5 +40,8 @@ module.exports = {
   REDIS_TTL,
   REDIS_PREFIX,
   REDIS_NAME,
-  SLACK_WEB_HOOK_URL
+  REDIS_DATABASE_NUMBER,
+  SLACK_WEB_HOOK_URL,
+  JWT_SECRET,
+  PRIVATE_KEY: fromBase64(PRIVATE_KEY)
 };

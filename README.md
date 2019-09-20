@@ -23,7 +23,7 @@ By the way, i am open for relocation and/or remote work.
 I am using `jest`
 
 ```
-  npm test
+npm test
 ```
 
 ### .env File Format
@@ -54,6 +54,10 @@ REDIS_SECRET=chooseTheBestPasswordIfNot150kPasswordGuessesPerSecondWillBeEnoughT
 REDIS_TTL=86400
 REDIS_PREFIX=ClientRedis
 REDIS_NAME="<prefix_name of the redis keys>"
+REDIS_DATABASE=3
+
 SLACK_WEB_HOOK_URL=https://hooks.slack.com/services/xxxxxxxxxxxx
 
+PRIVATE_KEY="<Put the base64 versions here or your xxx.pem file>"
+JWT_SECRET="ddddddddddddd"
 ```

@@ -3,11 +3,13 @@ const app = express();
 const config = require('./configs');
 const logger = require('./configs/logging');
 
-require('./configs/db');
+require('./configs/databases');
 
 require('./configs/app')(app);
 
-require('./configs/session')(app);
+// require('./configs/session')(app);
+
+require('./configs/auth').configureAuth(app);
 
 require('./configs/security')(app);
 
