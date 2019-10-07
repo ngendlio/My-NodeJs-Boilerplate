@@ -1,18 +1,38 @@
 const logger = require('../configs/logging');
-const passport = require('passport');
-const { genJwtToken } = require('../helpers');
+const { saveUserSession } = require('../helpers/session');
+const { checkPassword } = require('../helpers');
+const User = require('../models/User');
 
 exports.login = async (req, res, next) => {
-  passport.authenticate('local', (err, user) => {
-    if (err.msg == 'INVALID_CREDENTIALS') return res.status(403).send(err);
-    else if (err.msg == 'NOT_FOUND') return res.status(404).send();
+  req.assert('email', ' A valid email is required ').notEmpty();
+  req.assert('password', 'The password is required').notEmpty();
 
-    const token = genJwtToken(user);
+  if (req.validationErrors()) return res.status(400).send(req.validationErrors()[0]);
 
-    return res.send(token);
-  })(req, res, next);
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() })
+      .select({ password: 1 })
+      .exec();
+
+    if (!user) return res.status(404).send();
+
+    const isPasswordCorrect = await checkPassword(password, user);
+
+    if (!isPasswordCorrect) return res.status(403).send(err);
+
+    user.lastLogin = new Date();
+
+    await user.save();
+
+    const token = await saveUserSession(user._id);
+
+    return res.send({ token });
+  } catch (error) {
+    logger.issue('Failed to authenticate ' + error.message);
+    return res.status(500).send('Internal server error');
+  }
 };
 
-exports.logout = (req, res) => {
-  res.end();
-};
+exports.logout = (req, res) => res.end();

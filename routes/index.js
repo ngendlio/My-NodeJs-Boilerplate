@@ -3,17 +3,16 @@ const session = require('../controllers/session');
 const logger = require('../configs/logging');
 logger.info(' ✓ Routes configured ');
 
-const { isAuthenticated, isForAdmin } = require('../helpers/middlewares');
+const { isAuthenticated, isAdmin } = require('../middlewares/auth');
 
 module.exports = app => {
-  app.use((req, res, next) => {
-    return next();
-  });
+  app.use((req, res, next) => next());
+
   app
-    .get('/users', isAuthenticated, user.getUsers)
+    .get('/users', isAdmin, user.getUsers)
     .post('/users', user.createUser)
     .patch('/users/:userId', user.updateUser)
-    .delete('/users/:userId', isForAdmin, user.deleteUser);
+    .delete('/users/:userId', isAdmin, user.deleteUser);
 
   app.post('/session', session.login);
 

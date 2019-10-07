@@ -1,52 +1,31 @@
-const LocalStrategy = require('passport-local').Strategy,
-  User = require('../models/User');
-const { checkPassword } = require('../helpers');
-const passport = require('passport');
-
 const logger = require('./logging');
+const redis = require('../integrations/redis');
+
 logger.info(' ✓ Authentication configured ');
+/**
+ * This middleware will extract the beare token from the headers
+ * and will extract corresponding key in redis
+ * and will append it to the object req.user
+ * @param {*} app
+ */
+const configureAuth = app =>
+  app.use(async (req, res, next) => {
+    try {
+      const header = req.headers['authorization'];
 
-const configureAuth = app => {
-  app.use(passport.initialize()).use(passport.session());
+      if (!header) return next();
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
+      const [, token] = header.startsWith('Bearer ') ? header.split('Bearer ') : '';
+
+      const results = await redis.getKey(`${token}`);
+
+      req.user = JSON.parse(results);
+
+      return next();
+    } catch (error) {
+      logger.issue('Failed to check if user is authenticated ' + error.message, res);
+    }
+    return next();
   });
-
-  passport.deserializeUser((id, done) => {
-    User.findById(id)
-      .lean()
-      .exec((err, user) => done(err, user));
-  });
-
-  passport.use(checkSigninStrategy);
-  // More and more strategies of authentication here
-};
-
-const checkSignin = async (email, providedPassword, done) => {
-  try {
-    const user = await User.findOne({ email: email.toLowerCase().trim() })
-      .select({ password: 1 })
-      .exec();
-
-    if (!user) return done({ msg: 'NOT_FOUND' });
-
-    const isPasswordCorrect = await checkPassword(providedPassword, user);
-
-    if (!isPasswordCorrect) return done({ msg: 'INVALID_CREDENTIALS' });
-
-    user.lastLogin = new Date();
-
-    await user.save();
-
-    return done(null, user);
-  } catch (error) {
-    return done(error);
-  }
-};
-
-const mappingFields = { usernameField: 'email', passwordField: 'password' };
-
-const checkSigninStrategy = new LocalStrategy(mappingFields, checkSignin);
 
 module.exports = { configureAuth };

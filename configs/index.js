@@ -1,5 +1,3 @@
-const { fromBase64 } = require('../helpers');
-
 require('dotenv').config();
 console.log(' ✓ Environment variables configured ');
 
@@ -19,8 +17,6 @@ const {
   REDIS_NAME,
   REDIS_DATABASE_NUMBER,
   SLACK_WEB_HOOK_URL,
-  PRIVATE_KEY,
-  JWT_SECRET,
   NODE_ENV
 } = process.env; // we are filtering which env vars we extract from the OS
 
@@ -41,7 +37,5 @@ module.exports = {
   REDIS_PREFIX,
   REDIS_NAME,
   REDIS_DATABASE_NUMBER,
-  SLACK_WEB_HOOK_URL,
-  JWT_SECRET,
-  PRIVATE_KEY: fromBase64(PRIVATE_KEY)
+  SLACK_WEB_HOOK_URL
 };

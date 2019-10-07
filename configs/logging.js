@@ -11,8 +11,7 @@ const logger = pino({
   enabled: true
 });
 
-/**Custom log levels */
-
+/**Custom logging levels */
 logger.issue = (error, res) => {
   logger.fatal(error);
 

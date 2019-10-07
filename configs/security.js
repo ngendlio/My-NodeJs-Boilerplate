@@ -2,7 +2,7 @@ const helmet = require('helmet'), //useful security-headers
   contentLength = require('express-content-length-validator');
 
 const logger = require('./logging');
-logger.info(' ✓ Security configured ');
+logger.info(' ✓ Security configured');
 //Here you can spoof any back end
 const SPOOFED_SERVER = 'Phusion Passenger (mod_rails/mod_rack) 3.0.11';
 

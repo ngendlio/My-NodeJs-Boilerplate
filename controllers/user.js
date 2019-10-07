@@ -1,5 +1,4 @@
-const passport = require('passport'),
-  User = require('../models/User'),
+const User = require('../models/User'),
   logger = require('../configs/logging');
 const { GENDER_TYPES, USER_STATUS, USER_TYPES } = require('../helpers/constants');
 const { MALE, FEMALE } = GENDER_TYPES;
