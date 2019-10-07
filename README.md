@@ -40,7 +40,7 @@ MONGO_URI="mongodb://127.0.0.1:25000/DB_NAME"
 MONGO_USER="<enter the user>"
 MONGO_PASSWORD="<enter the user>"
 
-#Cryptography: We do not store password in clear but hashed with a salt.
+#Cryptography: We do not store password in clear but hashed with a secret salt.
 # https://en.wikipedia.org/wiki/Salt_(cryptography)
 PASSWORD_SALT="<enter the password hash>"
 
@@ -58,6 +58,4 @@ REDIS_DATABASE=3
 
 SLACK_WEB_HOOK_URL=https://hooks.slack.com/services/xxxxxxxxxxxx
 
-PRIVATE_KEY="<Put the base64 versions here or your xxx.pem file>"
-JWT_SECRET="ddddddddddddd"
 ```
